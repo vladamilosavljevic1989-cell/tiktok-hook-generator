@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Hook Generator — Stop the Scroll</title>
+<meta name="description" content="Free AI-powered TikTok hook generator. Get 7 scroll-stopping openers for any video topic in seconds. No signup needed.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0A0A0A;
+    --white: #FAFAFA;
+    --pink: #FF2D55;
+    --cyan: #00F5FF;
+    --grey: #141414;
+    --grey2: #222;
+    --grey3: #444;
+    --muted: #777;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* Header */
+  header {
+    padding: 52px 0 44px;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    border: 1px solid rgba(0,245,255,0.35);
+    padding: 4px 12px;
+    letter-spacing: 0.1em;
+    margin-bottom: 22px;
+  }
+
+  h1 {
+    font-size: clamp(42px, 10vw, 72px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 18px;
+  }
+
+  .line1 { display: block; color: var(--white); }
+  .line2 { display: block; color: var(--pink); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Usage counter */
+  .usage-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .usage-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--grey3);
+    transition: background 0.3s;
+  }
+
+  .dot.used { background: var(--pink); }
+  .dot.available { background: var(--cyan); }
+
+  /* Form */
+  .card {
+    background: var(--grey);
+    border: 1px solid var(--grey2);
+    padding: 28px;
+    margin-bottom: 12px;
+  }
+
+  .field { margin-bottom: 22px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 9px;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid var(--grey2);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    padding: 13px 15px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+  }
+
+  input[type="text"]:focus, select:focus { border-color: var(--pink); }
+  input[type="text"]::placeholder { color: var(--grey3); }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  select option { background: #141414; }
+
+  /* Chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .chip {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border: 1px solid var(--grey2);
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+    border-radius: 0;
+  }
+
+  .chip:hover { border-color: var(--grey3); color: var(--white); }
+  .chip.active { border-color: var(--pink); color: var(--pink); background: rgba(255,45,85,0.07); }
+
+  /* Generate button */
+  .btn-generate {
+    width: 100%;
+    background: var(--pink);
+    color: var(--white);
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 17px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: opacity 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 0;
+  }
+
+  .btn-generate:hover { opacity: 0.9; }
+  .btn-generate:active { transform: scale(0.99); }
+  .btn-generate:disabled { background: var(--grey2); color: var(--grey3); cursor: not-allowed; transform: none; opacity: 1; }
+
+  .spinner {
+    display: none;
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .btn-generate.loading .btn-label { display: none; }
+  .btn-generate.loading .spinner { display: block; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error */
+  .error {
+    display: none;
+    background: rgba(255,45,85,0.08);
+    border: 1px solid rgba(255,45,85,0.25);
+    color: #ff6b7a;
+    padding: 13px 16px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .error.show { display: block; }
+
+  /* Results */
+  .results { display: none; margin-top: 4px; }
+  .results.show { display: block; }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .results-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+  }
+
+  .remaining-label {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .hook-card {
+    background: var(--grey);
+    border: 1px solid var(--grey2);
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    transition: border-color 0.12s;
+  }
+
+  .hook-card:hover { border-color: #333; }
+
+  .hook-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--pink);
+    opacity: 0.6;
+    margin-bottom: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .hook-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--white);
+    margin-bottom: 13px;
+  }
+
+  .hook-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .hook-type {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .btn-copy {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    background: none;
+    border: 1px solid var(--grey2);
+    color: var(--muted);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.12s;
+    border-radius: 0;
+  }
+
+  .btn-copy:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-copy.copied { border-color: #22c55e; color: #22c55e; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 20px 16px; }
+    h1 { font-size: 46px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="badge">FREE · NO SIGNUP · AI-POWERED</div>
+    <h1>
+      <span class="line1">Stop the</span>
+      <span class="line2">Scroll.</span>
+    </h1>
+    <p class="subtitle">Generate 7 high-converting TikTok hooks for any video topic in seconds.</p>
+
+    <div class="usage-bar">
+      <div class="usage-dots" id="usageDots">
+        <div class="dot available"></div>
+        <div class="dot available"></div>
+        <div class="dot available"></div>
+        <div class="dot available"></div>
+        <div class="dot available"></div>
+      </div>
+      <span id="usageText">5 free generations today</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label>Your video topic</label>
+      <input type="text" id="topic" placeholder="e.g. how I paid off $10k of debt in 6 months" maxlength="300" />
+    </div>
+
+    <div class="field">
+      <label>Niche</label>
+      <select id="niche">
+        <option value="general">General / Lifestyle</option>
+        <option value="finance">Finance & Money</option>
+        <option value="fitness">Fitness & Health</option>
+        <option value="food">Food & Cooking</option>
+        <option value="travel">Travel</option>
+        <option value="beauty">Beauty & Fashion</option>
+        <option value="tech">Tech & Gadgets</option>
+        <option value="business">Business & Side Hustles</option>
+        <option value="relationships">Relationships & Dating</option>
+        <option value="education">Education & Study</option>
+        <option value="gaming">Gaming</option>
+        <option value="parenting">Parenting</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Hook style</label>
+      <div class="chips">
+        <button class="chip active" data-style="curiosity">Curiosity gap</button>
+        <button class="chip" data-style="controversial">Controversial</button>
+        <button class="chip" data-style="story">Story opener</button>
+        <button class="chip" data-style="number">Number / list</button>
+        <button class="chip" data-style="mistake">Mistake / warning</button>
+        <button class="chip" data-style="relatable">Relatable</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-generate" id="generateBtn" onclick="generate()">
+    <span class="btn-label">Generate 7 hooks →</span>
+    <div class="spinner"></div>
+  </button>
+
+  <div class="error" id="error"></div>
+
+  <div class="results" id="results">
+    <div class="results-header">
+      <span class="results-label">YOUR HOOKS</span>
+      <span class="remaining-label" id="remainingLabel"></span>
+    </div>
+    <div id="hooksContainer"></div>
+  </div>
+
+  <footer>
+    Free to use · Powered by Claude AI · <span id="year"></span>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // --- Chip selection ---
+  let selectedStyle = 'curiosity';
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedStyle = chip.dataset.style;
+    });
+  });
+
+  // --- Usage dots ---
+  const TOTAL = 5;
+  let used = parseInt(localStorage.getItem('hooksUsed_' + today()) || '0');
+  updateDots(used);
+
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  function updateDots(usedCount) {
+    const dots = document.querySelectorAll('.dot');
+    const remaining = Math.max(0, TOTAL - usedCount);
+    dots.forEach((dot, i) => {
+      dot.classList.remove('used', 'available');
+      if (i < usedCount) dot.classList.add('used');
+      else dot.classList.add('available');
+    });
+    const text = remaining === 0
+      ? 'No generations left today — come back tomorrow'
+      : `${remaining} free generation${remaining !== 1 ? 's' : ''} left today`;
+    document.getElementById('usageText').textContent = text;
+  }
+
+  // --- Main generate function ---
+  async function generate() {
+    const topic = document.getElementById('topic').value.trim();
+    const niche = document.getElementById('niche').value;
+    const btn = document.getElementById('generateBtn');
+    const errorEl = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    errorEl.classList.remove('show');
+
+    if (!topic) { showError('Please enter your video topic first.'); return; }
+    if (topic.length < 3) { showError('Topic is too short — give a bit more detail.'); return; }
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    results.classList.remove('show');
+
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, niche, style: selectedStyle })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+
+      // Update local usage counter
+      used = TOTAL - (data.remaining + 1); // server is source of truth
+      const todayKey = 'hooksUsed_' + today();
+      localStorage.setItem(todayKey, String(used + 1));
+      updateDots(used + 1);
+
+      renderHooks(data.hooks, data.remaining);
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  }
+
+  function renderHooks(hooks, remaining) {
+    const container = document.getElementById('hooksContainer');
+    const remainingLabel = document.getElementById('remainingLabel');
+    container.innerHTML = '';
+    remainingLabel.textContent = remaining > 0
+      ? `${remaining} generation${remaining !== 1 ? 's' : ''} left today`
+      : 'Last generation today';
+
+    hooks.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'hook-card';
+      card.innerHTML = `
+        <div class="hook-num">HOOK ${String(i + 1).padStart(2, '0')}</div>
+        <div class="hook-text">${esc(item.hook)}</div>
+        <div class="hook-footer">
+          <span class="hook-type">${esc(item.type)}</span>
+          <button class="btn-copy" onclick="copy(this, \`${escAttr(item.hook)}\`)">Copy</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function escAttr(s) {
+    return String(s).replace(/`/g, '\\`').replace(/\$/g, '\\$');
+  }
+
+  document.getElementById('topic').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>

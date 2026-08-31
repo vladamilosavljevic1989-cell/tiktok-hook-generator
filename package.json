@@ -1,0 +1,9 @@
+{
+  "name": "tiktok-hook-generator",
+  "version": "1.0.0",
+  "description": "TikTok Hook Generator — AI-powered scroll-stopping hooks",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
